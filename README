@@ -1,0 +1,4 @@
+Hermes: Ruby lib to load stock data from 10jqka data files.
+
+Special thanks to OCIAthena (http://ociathena.sourceforge.net) project,
+which makes the structure of data files public.
