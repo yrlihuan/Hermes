@@ -77,75 +77,77 @@ module Stock
     class Base
       SCALERS = [1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 10000000.0]
 
-      def self.load_records(fin, header, indices)
-        raise "not implemented!"
-      end
-
-      protected
-      def self.load_header(fin)
-        header = Header.new
-
-        # Finger print
-        fin.seek(0)
-        if fin.read(Header::FingerPrint.length) != Header::FingerPrint
-          raise "not a valid jqka data file!"
+      class << self
+        def load_records(fin, header, indices)
+          raise "not implemented!"
         end
 
-        # Header info
-        record_cnt, header_len, record_len, field_cnt = fin.read(10).unpack("ISSS")
+        def load_header(fin)
+          header = Header.new
 
-        record_cnt &= 0xffffff
-        header.record_cnt = record_cnt
-        header.header_len = header_len
-        header.record_len = record_len
-        header.field_cnt = field_cnt
+          # Finger print
+          fin.seek(0)
+          if fin.read(Header::FingerPrint.length) != Header::FingerPrint
+            raise "not a valid jqka data file!"
+          end
 
-        # Field definition
-        1.upto(field_cnt) do
-          w1, type, w2, size = fin.read(4).unpack("CCCC")
-          header.add_field(type, size)
+          # Header info
+          record_cnt, header_len, record_len, field_cnt = fin.read(10).unpack("ISSS")
+
+          record_cnt &= 0xffffff
+          header.record_cnt = record_cnt
+          header.header_len = header_len
+          header.record_len = record_len
+          header.field_cnt = field_cnt
+
+          # Field definition
+          1.upto(field_cnt) do
+            w1, type, w2, size = fin.read(4).unpack("CCCC")
+            header.add_field(type, size)
+          end
+
+          # If schema 1
+          if 16 + 4 * field_cnt == header_len
+            return header
+          end
+
+          # Skip stuffing section
+          fin.seek(2 * field_cnt, IO::SEEK_CUR)
+
+          # Index block
+          index_block_len, index_cnt = fin.read(4).unpack("SS")
+          1.upto(index_cnt) do
+            market, id, free_records, start_idx, total_records = fin.read(18).unpack("CZ9SIS")
+            header.add_index_entity(market, id, start_idx, total_records, free_records)
+          end
+
+          header
         end
 
-        # If schema 1
-        if 16 + 4 * field_cnt == header_len
-          return header
-        end
-
-        # Skip stuffing section
-        fin.seek(2 * field_cnt, IO::SEEK_CUR)
-
-        # Index block
-        index_block_len, index_cnt = fin.read(4).unpack("SS")
-        1.upto(index_cnt) do
-          market, id, free_records, start_idx, total_records = fin.read(18).unpack("CZ9SIS")
-          header.add_index_entity(market, id, start_idx, total_records, free_records)
-        end
-
-        header
-      end
-
-      def self.parse_date(i)
-        if i < 0
-          Date.new(1970, 1, 1)
-        else
-          Date.new(i/10000, (i%10000)/100, i%100)
-        end
-      end
-
-      def self.parse_value(uint)
-        value = uint & 0x0fffffff
-        sgn = uint >> 31
-        amplifier = (uint >> 28) & 0x7
-
-        if amplifier != 0
-          if sgn != 0
-            value /= SCALERS[amplifier]
+        protected
+        def parse_date(i)
+          if i < 0
+            Date.new(1970, 1, 1)
           else
-            value *= SCALERS[amplifier]
+            Date.new(i/10000, (i%10000)/100, i%100)
           end
         end
 
-        value
+        def parse_value(uint)
+          value = uint & 0x0fffffff
+          sgn = uint >> 31
+          amplifier = (uint >> 28) & 0x7
+
+          if amplifier != 0
+            if sgn != 0
+              value /= SCALERS[amplifier]
+            else
+              value *= SCALERS[amplifier]
+            end
+          end
+
+          value
+        end
       end
     end
   end
