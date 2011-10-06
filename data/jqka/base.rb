@@ -78,10 +78,6 @@ module Stock
       SCALERS = [1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 10000000.0]
 
       class << self
-        def load_records(fin, header, indices)
-          raise "not implemented!"
-        end
-
         def load_header(fin)
           header = Header.new
 
@@ -125,6 +121,40 @@ module Stock
         end
 
         protected
+        def format_indices(header, indices)
+          if indices.is_a? Integer
+            indices = [indices]
+          elsif indices == nil
+            if header.indices.size == 0
+              indices = 0.upto(header.record_cnt - 1)
+            else
+              indices = []
+              header.indices.each do |id,ind|
+                indices += ind.start_idx.upto(ind.start_idx+ind.total-ind.free-1).map {|v| v}
+              end
+            end
+          end
+
+          indices
+        end
+
+        def match_ids_for_indices(header, indices)
+          mapping = {}
+
+          header.indices.each do |id,ind|
+            ind.start_idx.upto(ind.start_idx+ind.total-ind.free-1) do |i|
+              mapping[i] = id
+            end
+          end
+
+          matches = {}
+          indices.each do |i|
+            matches[i] = mapping[i]
+          end
+
+          matches
+        end
+
         def parse_date(i)
           if i < 0
             Date.new(1970, 1, 1)

@@ -6,6 +6,9 @@ require "rubygems"
 require "ruby-debug"
 
 class Qkja < Test::Unit::TestCase
+  D1BarSample = File.expand_path("../data/jqka/history/shase/600036.day", __FILE__)
+  DividendSample = File.expand_path("../data/jqka/finance/权息资料.财经", __FILE__)
+
   class TestDataType < Stock::Jqka::Base
     def self.load_header_from_file(file)
       File.open(file, "rb") do |f|
@@ -15,8 +18,7 @@ class Qkja < Test::Unit::TestCase
   end
 
   def test_header_type1
-    file = File.expand_path("../data/600036.day", __FILE__)
-    header = TestDataType.load_header_from_file(file)
+    header = TestDataType.load_header_from_file(D1BarSample)
 
     assert_equal(1932, header.record_cnt)
     assert_equal(184, header.header_len)
@@ -25,8 +27,7 @@ class Qkja < Test::Unit::TestCase
   end
 
   def test_header_type2
-    file = File.expand_path("../data/dividends.finace", __FILE__)
-    header = TestDataType.load_header_from_file(file)
+    header = TestDataType.load_header_from_file(DividendSample)
 
     assert_equal(0x8c60, header.record_cnt)
     assert_equal(0xda4e, header.header_len)
@@ -37,9 +38,7 @@ class Qkja < Test::Unit::TestCase
   end
 
   def test_index_block
-    file = File.expand_path("../data/dividends.finace", __FILE__)
-
-    File.open(file, "rb") do |f|
+    File.open(DividendSample, "rb") do |f|
       header = Stock::Jqka::Dividend.load_header(f)
       ind = header.indices["S000002"]
       assert_equal(ind != nil, true)
@@ -52,9 +51,7 @@ class Qkja < Test::Unit::TestCase
   end
 
   def test_d1bar
-    file = File.expand_path("../data/600036.day", __FILE__)
-
-    File.open(file, "rb") do |f|
+    File.open(D1BarSample, "rb") do |f|
       header = Stock::Jqka::D1Bar.load_header(f)
       Stock::Jqka::D1Bar.load_records(f, header, 1) do |record|
         assert_equal("2003-07-29", record[:date].to_s)
@@ -69,15 +66,14 @@ class Qkja < Test::Unit::TestCase
   end
 
   def test_dividend
-    file = File.expand_path("../data/dividends.finace", __FILE__)
-
-    File.open(file, "rb") do |f|
+    File.open(DividendSample, "rb") do |f|
       header = Stock::Jqka::Dividend.load_header(f)
       Stock::Jqka::Dividend.load_records(f, header, 0) do |record|
+        assert_equal("S000001", record[:id])
         assert_equal("1993-05-24", record[:date].to_s)
         assert_equal("1993-05-24", record[:ex_date].to_s)
         assert_equal(0.3, record[:cash])
-        assert_equal(0.85, record[:split])
+        assert_equal(0.85, record[:stock])
         assert_equal(0.5, record[:bonus])
         assert_equal(0.1, record[:allotment])
         assert_equal(16.0, record[:allotment_price])
@@ -87,10 +83,11 @@ class Qkja < Test::Unit::TestCase
 
       records = Stock::Jqka::Dividend.load_records(f, header, 0.upto(1))
       record = records[1]
+      assert_equal("S000001", record[:id])
       assert_equal("1994-07-09", record[:date].to_s)
       assert_equal("1994-07-09", record[:ex_date].to_s)
       assert_equal(0.0, record[:cash])
-      assert_equal(0.0, record[:split])
+      assert_equal(0.0, record[:stock])
       assert_equal(0.0, record[:bonus])
       assert_equal(0.1, record[:allotment])
       assert_equal(5.0, record[:allotment_price])
