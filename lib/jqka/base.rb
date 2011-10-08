@@ -48,7 +48,7 @@ module Stock
             market_id = "U"
           end
 
-          @id = market_id + id
+          @id = id
           @start_idx = start_idx
           @total = total_records
           @free = free_records

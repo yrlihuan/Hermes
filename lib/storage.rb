@@ -64,7 +64,8 @@ module Stock
                 "close Float",
                 "amount Float",
                 "volumn Float",
-                "id String"]
+                "id String",
+                "src String"]
       @index = ["id,date"]
       self.generate_table
     end

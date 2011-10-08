@@ -6,9 +6,7 @@ module Stock
       def self.load_records(fin, header, indices)
         records = []
 
-        if indices.is_a? Integer
-          indices = [indices]
-        end
+        indices = self.format_indices(header, indices)
 
         indices.each do |i|
           fin.seek(header.header_len + header.record_len * i)
@@ -16,6 +14,11 @@ module Stock
 
           # record len is 168
           fields = fin.read(header.record_len).unpack("iIIIIII")
+          if fields[0] == 0
+            puts "Invalid Record: pos => #{i}"
+            next
+          end
+
           record[:date] = self.parse_date(fields[0])
           record[:open] = self.parse_value(fields[1])
           record[:high] = self.parse_value(fields[2])
