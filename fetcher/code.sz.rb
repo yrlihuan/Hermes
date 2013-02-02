@@ -7,8 +7,7 @@ require "rubygems"
 require "json"
 require "nokogiri"
 
-basename = File.basename(__FILE__)
-require File.expand_path("../../accessor/#{basename}", __FILE__)
+require File.expand_path("../../accessor/all.rb", __FILE__)
 require File.expand_path("../base.rb", __FILE__)
 
 module Fetcher
