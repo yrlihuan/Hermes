@@ -1,15 +1,15 @@
 #
-# filename: accessor/daily.sh.rb
+# filename: accessor/cap.sh.rb
 # author: yrlihuan@gmail.com
 #
 
 require "rubygems"
+require "json"
 
 require File.expand_path("../base.rb", __FILE__)
-require File.expand_path("../code.sh.rb", __FILE__)
 
 module Accessor
-  class DailySh < Base
+  class CapSh < Base
     def query(params={})
       # params = {}
       # params = {:code => "600036"}
@@ -19,22 +19,27 @@ module Accessor
       data = {}
       Dir.entries(dir).each do |f|
         next if f.start_with? '.'
-        next if c && f.sub(".csv", "") != c
+        next if c && f.sub(".json", "") != c
 
         text = File.open(File.join(dir, f)).read
-        code = f.gsub("csv", "ss")
-        data[code] = text
+        code = f.gsub(".json", "")
+        data[code] = JSON.load text
       end
 
       data
     end
 
     def update(identifier, params={})
-      data = params[:data]
-      path = File.join(data_dir, "#{identifier}.csv")
+      data = {}
+      data["all"] = params[:all]
+      data["a"] = params[:a]
+      data["b"] = params[:b]
+      data["h"] = params[:h]
+      data["restricted"] = params[:restricted]
+      path = File.join(data_dir, "#{identifier}.json")
 
       f = File.open(path, 'w')
-      f.write(data)
+      f.write(JSON.dump(data))
       f.close
     end
 
@@ -45,7 +50,7 @@ module Accessor
       Dir.entries(dir).each do |f|
         next if f.start_with? '.'
 
-        f = f.gsub(".csv", ".ss")
+        f = f.gsub(".json", "")
         data[f] = true
       end
 
