@@ -39,7 +39,7 @@ module Fetcher
       #end
 
       #text = res.body
-      text = `curl -s "#{url(page)}"`
+      text = `curl -s -e "http://www.sse.com.cn/assortment/stock/list/name/" "#{url(page)}"`
     end
 
     def parse_data(text)
