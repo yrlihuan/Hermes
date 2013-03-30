@@ -5,6 +5,7 @@
 
 require "rubygems"
 require "optparse"
+require "date"
 require File.expand_path("../../lib/string_ext.rb", __FILE__)
 
 module Accessor
@@ -31,9 +32,11 @@ module Accessor
     end
   end
 
-  def self.stock_options(options, opts)
-    opts.on("-a", "--all", "Get the full list of codes") do |v|
-      options[:all] = true
+  def self.stock_options(options, opts, can_list_all=true)
+    if (can_list_all)
+      opts.on("-a", "--all", "Get the full list of codes") do |v|
+        options[:all] = true
+      end
     end
 
     opts.on("-s", "--stocks a,b,c", Array, "List of stocks to query") do |v|
@@ -46,6 +49,20 @@ module Accessor
       puts opts
       exit
     end
+  end
+
+  def self.time_options(options, opts)
+    opts.on("-f", "--from [DATE]", "Start date (yyyymmdd)") do |date|
+      options[:from] = Date.parse date
+    end
+
+    opts.on("-t", "--to [DATE]", "End date (yyyymmdd)") do |date|
+      options[:to] = Date.parse date
+    end
+  end
+
+  def self.validate_time_options(options, opts)
+
   end
 
   def self.common_options(options, opts)
