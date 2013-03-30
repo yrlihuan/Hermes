@@ -18,8 +18,7 @@ module Fetcher
       data_existed = accessor.list
       codes = Accessor::CodeSh.new.query.keys
       codes.each do |code|
-        # code sample: 6000036.ss
-        code = code.gsub(".ss", "")
+        # code sample: 6000036
         if !force_update && data_existed[code]
           puts "skipping #{code}"
           next

@@ -40,7 +40,6 @@ module Fetcher
 
     def save_data(code, text)
       accessor = accessor_cls.new
-      code = code.gsub(".ss", "")
       accessor.update(code, :data => text)
     end
   end
