@@ -4,6 +4,7 @@
 #
 
 require "rubygems"
+require "optparse"
 require File.expand_path("../../lib/string_ext.rb", __FILE__)
 
 module Accessor

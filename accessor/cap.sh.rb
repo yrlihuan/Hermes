@@ -11,19 +11,20 @@ require File.expand_path("../base.rb", __FILE__)
 module Accessor
   class CapSh < Base
     def query(params={})
-      # params = {}
-      # params = {:code => "600036"}
       dir = data_dir
 
-      c = params[:code]
+      all = params[:all]
+      stocks = params[:stocks]
+
       data = {}
       Dir.entries(dir).each do |f|
         next if f.start_with? '.'
-        next if c && f.sub(".json", "") != c
 
-        text = File.open(File.join(dir, f)).read
         code = f.gsub(".json", "")
-        data[code] = JSON.load text
+        if all or stocks.index(code)
+          text = File.open(File.join(dir, f)).read
+          data[code] = JSON.load text
+        end
       end
 
       data
@@ -58,3 +59,19 @@ module Accessor
     end
   end
 end
+
+if $PROGRAM_NAME == __FILE__
+  options = {}
+  opts = OptionParser.new do |opts|
+    Accessor.stock_options(options, opts)
+    Accessor.common_options(options, opts)
+  end
+
+  opts.parse!
+  Accessor.validate_stock_options(options, opts)
+
+  gen = Accessor::CapSh.new
+  data = gen.query options
+  puts JSON.dump(data)
+end
+

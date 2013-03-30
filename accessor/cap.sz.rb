@@ -12,29 +12,29 @@ require File.expand_path("../cap.sh.rb", __FILE__)
 module Accessor
   class CapSz < CapSh
     def query(params={})
-      # params = {}
-      # params = {:code => "600036"}
       dir = data_dir
-      puts dir
 
-      c = params[:code]
+      all = params[:all]
+      stocks = params[:stocks]
+
       data = {}
       Dir.entries(dir).each do |f|
         next if f.start_with? '.'
-        next if c && f.sub(".json", "") != c
 
-        text = File.open(File.join(dir, f)).read
         code = f.gsub(".json", "")
-        code_data = JSON.load text
-        cap = {}
-        cap["all"] = code_data["market cap"].gsub(",", "").to_i
-        cap["all"] += code_data["market cap b"].gsub(",", "").to_i
-        cap["a"] = code_data["live cap"].gsub(",", "").to_i
-        cap["b"] = code_data["live cap b"].gsub(",", "").to_i
-        cap["h"] = 0
-        cap["restricted"] = cap["all"] - cap["a"] - cap["b"]
+        if all or stocks.index(code)
+          text = File.open(File.join(dir, f)).read
+          code_data = JSON.load text
+          cap = {}
+          cap["all"] = code_data["market cap"].gsub(",", "").to_i
+          cap["all"] += code_data["market cap b"].gsub(",", "").to_i
+          cap["a"] = code_data["live cap"].gsub(",", "").to_i
+          cap["b"] = code_data["live cap b"].gsub(",", "").to_i
+          cap["h"] = 0
+          cap["restricted"] = cap["all"] - cap["a"] - cap["b"]
 
-        data[code] = cap
+          data[code] = cap
+        end
       end
 
       data
@@ -65,9 +65,17 @@ module Accessor
 end
 
 if $PROGRAM_NAME == __FILE__
+  options = {}
+  opts = OptionParser.new do |opts|
+    Accessor.stock_options(options, opts)
+    Accessor.common_options(options, opts)
+  end
+
+  opts.parse!
+  Accessor.validate_stock_options(options, opts)
+
   gen = Accessor::CapSz.new
-  data = gen.query
-  puts data.count
-  puts data['000001']
+  data = gen.query options
+  puts JSON.dump(data)
 end
 
