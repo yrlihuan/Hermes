@@ -22,7 +22,7 @@ module Accessor
         next if c && f.sub(".csv", "") != c
 
         text = File.open(File.join(dir, f)).read
-        code = f.gsub("csv", "ss")
+        code = f.gsub(".csv", "")
         data[code] = text
       end
 
@@ -45,7 +45,7 @@ module Accessor
       Dir.entries(dir).each do |f|
         next if f.start_with? '.'
 
-        f = f.gsub(".csv", ".ss")
+        f = f.gsub(".csv", "")
         data[f] = true
       end
 

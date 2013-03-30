@@ -29,5 +29,30 @@ module Accessor
       File.expand_path("../../data/#{filename}", __FILE__)
     end
   end
+
+  def self.stock_options(options, opts)
+    opts.on("-a", "--all", "Get the full list of codes") do |v|
+      options[:all] = true
+    end
+
+    opts.on("-s", "--stocks a,b,c", Array, "List of stocks to query") do |v|
+      options[:stocks] = v
+    end
+  end
+
+  def self.validate_stock_options(options, opts)
+    if !options[:all] && !options[:stocks]
+      puts opts
+      exit
+    end
+  end
+
+  def self.common_options(options, opts)
+    opts.on_tail("-h", "--help", "Show this message") do
+      puts opts
+      exit
+    end
+  end
 end
+
 

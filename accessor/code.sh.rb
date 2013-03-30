@@ -5,6 +5,7 @@
 
 require "rubygems"
 require "json"
+require "optparse"
 
 require File.expand_path("../base.rb", __FILE__)
 
@@ -13,14 +14,19 @@ module Accessor
     def query(params={})
       dir = data_dir
 
+      all = params[:all]
+      stocks = params[:stocks]
+
       data = {}
       Dir.entries(dir).each do |f|
         next if f.start_with? '.'
 
-        text = File.open(File.join(dir, f)).read
-        obj = JSON.load(text)
-        code = f.gsub("json", "ss")
-        data[code] = obj
+        code = f.gsub(".json", "")
+        if all or stocks.index(code)
+          text = File.open(File.join(dir, f)).read
+          obj = JSON.load(text)
+          data[code] = obj
+        end
       end
 
       data
@@ -41,9 +47,18 @@ module Accessor
 end
 
 if $PROGRAM_NAME == __FILE__
+  options = {}
+  opts = OptionParser.new do |opts|
+    Accessor.stock_options(options, opts)
+    Accessor.common_options(options, opts)
+  end
+
+  opts.parse!
+  Accessor.validate_stock_options(options, opts)
+
   gen = Accessor::CodeSh.new
-  data = gen.query
-  puts data.count
-  puts data['600036.ss']
+  data = gen.query options
+
+  puts JSON.dump(data)
 end
 
