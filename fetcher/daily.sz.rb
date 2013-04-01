@@ -18,7 +18,6 @@ module Fetcher
       data_existed = accessor.list
       codes = Accessor::CodeSz.new.query({:all => true}).keys
       codes.each do |code|
-        # code sample: 6000036.ss
         if !force_update && data_existed[code]
           puts "skipping #{code}"
           next
@@ -33,12 +32,6 @@ module Fetcher
     def url(code)
       "http://ichart.finance.yahoo.com/table.csv?" +
       "s=#{code}.sz&d=1&e=1&f=2013&g=d&a=3&b=9&c=1990&ignore=.csv"
-    end
-
-    def fetch_data(code)
-    def save_data(code, text)
-      accessor = accessor_cls.new
-      accessor.update(code, :data => text)
     end
   end
 end
