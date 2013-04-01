@@ -35,7 +35,7 @@ module Accessor
             # make sure the date is in the range
             # TODO: here is plenty room of optimization
             if values[0] >= from && values[0] <= to
-              rows << l.split(",")
+              rows << l.split(",").map {|str| str.to_f}
             end
           end
 
