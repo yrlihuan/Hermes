@@ -11,6 +11,17 @@ require File.expand_path("../base.rb", __FILE__)
 module Accessor
   class CodeSh < Base
     def query(params={})
+      raw_data = query_raw(params)
+
+      data = {}
+      raw_data.each do |code, dict|
+        data[code] = dict["PRODUCTNAME"]
+      end
+
+      data
+    end
+
+    def query_raw(params={})
       dir = data_dir
 
       all = params[:all]

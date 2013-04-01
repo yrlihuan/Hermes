@@ -7,6 +7,16 @@ require File.expand_path("../code.sh.rb", __FILE__)
 
 module Accessor
   class CodeSz < CodeSh
+    def query(params={})
+      raw_data = query_raw(params)
+
+      data = {}
+      raw_data.each do |code, dict|
+        data[code] = dict["name"]
+      end
+
+      data
+    end
   end
 end
 
