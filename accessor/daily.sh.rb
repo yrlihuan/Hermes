@@ -32,10 +32,17 @@ module Accessor
 
           lines[1..-1].each do |l|
             values = l.split(",")
+            date = values[0]
             # make sure the date is in the range
             # TODO: here is plenty room of optimization
-            if values[0] >= from && values[0] <= to
-              rows << l.split(",").map {|str| str.to_f}
+            if date >= from && date <= to
+              row = []
+              row << values[0]
+              values[1..-1].each do |v|
+                row << v.to_f
+              end
+
+              rows << row
             end
           end
 
