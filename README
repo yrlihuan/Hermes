@@ -1,4 +1,17 @@
-Hermes: Ruby lib to load stock data from 10jqka data files.
+Hermes is data collector & accessor for chinese stock market data.
 
-Special thanks to OCIAthena (http://ociathena.sourceforge.net) project,
-which makes the structure of data files public.
+All data is collected from public available sources (yahoo finance, sina finance, exchange's websites, etc).
+
+Usage:
+  
+  Fetch meta data:
+    ruby fetcher/code.sh.rb
+    ruby fetcher/code.sz.rb
+
+  Fetch stock's daily data:
+    ruby fetcher/daily.sh.rb
+    ruby fetcher/daily.sz.rb
+
+  Read stock's daily data:
+    ruby accessor/daily.sh.rb -s 000001 -f 20120101
+
