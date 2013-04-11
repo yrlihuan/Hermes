@@ -1,0 +1,7 @@
+Compile:
+  amxmlc SinaFinanceDecoder.as
+
+Run:
+  adl SinaFinanceDecoder.xml -- `cat sample_sz000001_130329.txt`
+
+(may need to modify the xml to change the air sdk version)
