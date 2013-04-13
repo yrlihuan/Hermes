@@ -1,5 +1,5 @@
 Compile:
-  amxmlc SinaFinanceDecoder.as
+  amxmlc -debug=false -omit-trace-statements=false SinaFinanceDecoder.as
 
 Run:
   adl SinaFinanceDecoder.xml -- `cat sample_sz000001_130329.txt`

@@ -18,10 +18,11 @@ package { // no special packages needed to organize this single file project
     private var outputText:String = "";
 
     public function print(s:Object) : void {
-      var stdout : FileStream = new FileStream();
-      stdout.open(new File("/dev/stdout"), FileMode.WRITE);
-      stdout.writeUTFBytes(s.toString());
-      stdout.close();
+      //var stdout : FileStream = new FileStream();
+      //stdout.open(new File("/dev/stdout"), FileMode.WRITE);
+      //stdout.writeUTFBytes(s.toString());
+      //stdout.close();
+      trace(s);
     }
 
     public function outputLine(s:Object) : void {
@@ -29,10 +30,11 @@ package { // no special packages needed to organize this single file project
     }
 
     public function printOutput(): void {
-      var stdout : FileStream = new FileStream();
-      stdout.open(new File("/dev/stdout"), FileMode.WRITE);
-      stdout.writeUTFBytes(outputText);
-      stdout.close();
+      //var stdout : FileStream = new FileStream();
+      //stdout.open(new File("/dev/stdout"), FileMode.WRITE);
+      //stdout.writeUTFBytes(outputText);
+      //stdout.close();
+      trace(outputText);
     }
 
     // read from stdin doesn't work
@@ -54,7 +56,8 @@ package { // no special packages needed to organize this single file project
         outputLine("wrong number of results. Expected: 243, Actual: " + String(decoded.length));
       }
 
-      outputLine("time,price,avg price,volume");
+      // output the header if necessary
+      // outputLine("time,price,avg price,volume");
 
       var date:Date = decoded[0].date;
       var i:int = 0;
