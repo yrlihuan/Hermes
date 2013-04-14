@@ -32,6 +32,12 @@ module Fetcher
       "&pageHelp.beginPage=#{page}&pageHelp.endPage=#{page+5}&_=1359641079733"
     end
 
+    def detail_url(code)
+      "http://query.sse.com.cn/commonQuery.do?" +
+      "jsonCallBack=jsonp1365867800897&_=1365867800937" +
+      "&isPagination=false&sqlId=COMMON_SSE_ZQPZ_GP_GPLB_AGSSR_C&productid=#{code}"
+    end
+
     def fetch_data(page)
       #uri = URI.parse url
       #res = Net::HTTP.start(uri.host, uri.port) do |http|
@@ -47,12 +53,28 @@ module Fetcher
       json = text[start...-1]
 
       data = JSON.load(json)['pageHelp']['data']
+
+      data
     end
 
     def save_data(data)
       accessor = accessor_cls.new
       data.each do |dict|
         code = dict['PRODUCTID']
+
+        cmd = "curl -s -e \"http://www.sse.com.cn/assortment/stock/list/stockdetails/company/index.shtml?COMPANY_CODE=#{code}\" \"#{detail_url(code)}\""
+        text = `#{cmd}`
+        start = text.index('(') + 1
+        json = text[start...-1]
+
+        data = JSON.load(json)['result']
+
+        if data.count != 0
+          dict['IPO_DATE'] = data[0]["LISTINGDATEA"]
+        else
+          dict['IPO_DATA'] = "2099-12-31"
+        end
+
         accessor.update(code, :data => dict)
       end
     end

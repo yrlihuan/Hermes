@@ -12,7 +12,11 @@ module Accessor
 
       data = {}
       raw_data.each do |code, dict|
-        data[code] = dict["name"]
+        if params[:more]
+          data[code] = {:name => dict["name"], :ipo_date => dict["ipo date"]}
+        else
+          data[code] = dict["name"]
+        end
       end
 
       data
@@ -25,6 +29,7 @@ if $PROGRAM_NAME == __FILE__
   opts = OptionParser.new do |opts|
     Accessor.stock_options(options, opts)
     Accessor.common_options(options, opts)
+    Accessor::CodeSz.advanced_options(options, opts)
   end
 
   opts.parse!
