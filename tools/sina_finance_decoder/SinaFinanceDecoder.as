@@ -94,8 +94,8 @@ package { // no special packages needed to organize this single file project
       // var MLC_sh600845_2008_01="IC+PhBgMSTX1UBPGegxjXZZGIKihEtBoUllAF7i/AFOANoIRRALJwKcERzPQyOEdrg5Ach56KygoEoQeGEhZeOAEUVMizeBTsuvDoQoi5BRZ8BWzeEiiYB3SoBS2HmgSwJYPAEk50DFODXZSQhzIUEGhdzLQJQgd2AZ7qCcFOrAZJMgQ/NIWhwALQFI7a+IQiGsZ5hCExCWEFxkgNwAGcgM3A2uNwBSCFcIQDlhMYB2BBqALCGk99VPAJowZ4cgS4CnuDCUEUQyywCkwPwpvEPoiBuA+wDwDsbrMQaekwdHWQhIQIwwg99RLwlOPKQ8IQzggsECCCMH4SgEq9mHGsLkgEagdeweiggCLjBO9QCq9QYP ...
 
       var raw_parts:Array = raw.split("\"");
-      outputLine(raw)
-      outputLine(String(raw_parts.length))
+      //outputLine(raw)
+      //outputLine(String(raw_parts.length))
       if (raw_parts.length < 3) {
         return undefined;
       }
@@ -126,7 +126,7 @@ package { // no special packages needed to organize this single file project
             outputLine("failed to split data into daily data");
           }
           else {
-            outputLine(String(data_parts.length));
+            //outputLine(String(data_parts.length));
             var i:int = 0;
             while (i < data_parts.length) {
               var p:String = data_parts[i];
