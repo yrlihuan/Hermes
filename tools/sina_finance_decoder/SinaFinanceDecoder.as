@@ -26,7 +26,7 @@ package { // no special packages needed to organize this single file project
     }
 
     public function outputLine(s:Object) : void {
-      outputText += s.toString() + "\n";
+      trace(s);
     }
 
     public function printOutput(): void {
@@ -54,6 +54,7 @@ package { // no special packages needed to organize this single file project
     {
       if (decoded.length != 243) {
         outputLine("wrong number of results. Expected: 243, Actual: " + String(decoded.length));
+        return;
       }
 
       // output the header if necessary
@@ -72,7 +73,7 @@ package { // no special packages needed to organize this single file project
           minutes_from_sod = 9*60 + 30 + i + 90 - 2; // skip 89 minutes break
         }
 
-        var monthS:String = date.month < 10 ? "0" + String(date.month) : String(date.month);
+        var monthS:String = date.month+1 < 10 ? "0" + String(date.month+1) : String(date.month+1);
         var dayS:String = date.date < 10 ? "0" + String(date.date) : String(date.date);
         var hour:int = minutes_from_sod / 60;
         var minute:int = minutes_from_sod % 60;
@@ -85,6 +86,22 @@ package { // no special packages needed to organize this single file project
 
         ++i;
       }
+    }
+
+    public function splitInputString(raw:String) : Array
+    {
+      // sample raw data
+      // var MLC_sh600845_2008_01="IC+PhBgMSTX1UBPGegxjXZZGIKihEtBoUllAF7i/AFOANoIRRALJwKcERzPQyOEdrg5Ach56KygoEoQeGEhZeOAEUVMizeBTsuvDoQoi5BRZ8BWzeEiiYB3SoBS2HmgSwJYPAEk50DFODXZSQhzIUEGhdzLQJQgd2AZ7qCcFOrAZJMgQ/NIWhwALQFI7a+IQiGsZ5hCExCWEFxkgNwAGcgM3A2uNwBSCFcIQDlhMYB2BBqALCGk99VPAJowZ4cgS4CnuDCUEUQyywCkwPwpvEPoiBuA+wDwDsbrMQaekwdHWQhIQIwwg99RLwlOPKQ8IQzggsECCCMH4SgEq9mHGsLkgEagdeweiggCLjBO9QCq9QYP ...
+
+      var raw_parts:Array = raw.split("\"");
+      outputLine(raw)
+      outputLine(String(raw_parts.length))
+      if (raw_parts.length < 3) {
+        return undefined;
+      }
+
+      var data_parts:Array = raw_parts[1].split(",");
+      return data_parts;
     }
 
     public function decodeInputString(encoded:String) : Array
@@ -103,14 +120,27 @@ package { // no special packages needed to organize this single file project
       function onInvokeEvent(invocation:InvokeEvent):void {
         var args:Array = invocation.arguments;
         if (args.length != 0) {
-          formatMinDataOutput(decodeInputString(args[0]));
+          var data_parts:Array = splitInputString(args[1]);
+
+          if (!data_parts) {
+            outputLine("failed to split data into daily data");
+          }
+          else {
+            outputLine(String(data_parts.length));
+            var i:int = 0;
+            while (i < data_parts.length) {
+              var p:String = data_parts[i];
+              formatMinDataOutput(decodeInputString(p));
+
+              ++i;
+            }
+          }
         }
         else {
           outputLine("Usage:");
           outputLine("  adl SinaFinanceDecoder.swf -- <encoded string>");
         }
 
-        printOutput();
         NativeApplication.nativeApplication.exit();
       }
 
