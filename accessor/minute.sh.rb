@@ -10,7 +10,7 @@ require File.expand_path("../code.sh.rb", __FILE__)
 
 module Accessor
   class MinuteSh < Base
-    def update(identifier, params={})
+    def update(code, params={})
       data = params[:data]
       year = params[:year]
       month = params[:month]
@@ -18,14 +18,14 @@ module Accessor
       dir = File.join(data_dir, "#{code}")
       `mkdir -p #{dir}` unless File.exists? dir
 
-      path = File.join(dir, "%d%2d.csv" % [year,month])
+      path = File.join(dir, "%d%02d.csv" % [year,month])
       f = File.open(path, 'w')
       f.write(data)
       f.close
     end
 
     def exists?(code, year, month)
-      file = File.join(data_dir, "#{code}", "%d%2d.csv" % [year,month])
+      file = File.join(data_dir, "#{code}", "%d%02d.csv" % [year,month])
       File.exists? file
     end
   end

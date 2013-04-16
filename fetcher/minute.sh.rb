@@ -17,14 +17,21 @@ module Fetcher
 
       # SINA only have data after 2008 :(
       today = Date.today
-      months_since_2008 = 12 * (today.year - 2008) + today.month
+      jan1_2008 = Date.parse "2008-01-01"
 
-      codes = Accessor::CodeSh.new.query({:all => true}).keys
-      codes.each do |code|
+      codes = Accessor::CodeSh.new.query({:all => true, :more => true})
+      codes.each do |code, data|
+        # some stocks don't have a ipo_date
+        next unless data.key?(:ipo_date) && data[:ipo_date] && data[:ipo_date] < "2030-01-01"
+
+        ipo_date = Date.parse data[:ipo_date]
+        d = ipo_date < jan1_2008 && jan1_2008 || ipo_date
+
         # update date prior to the current month
-        1.upto(months_since_2008-1) do |months|
-          y = (months-1) / 12 + 2008
-          m = (months-1) % 12 + 1
+        while d.year < today.year || d.month < today.month
+          y = d.year
+          m = d.month
+          d = d >> 1
 
           data_existed = accessor.exists?(code, y, m)
           next if !force_update && data_existed
@@ -34,8 +41,9 @@ module Fetcher
 
           if parsed
             save_data(code, y, m, parsed)
+          else
+            puts "fail to parse: #{y}, #{m}"
           end
-
         end
       end
     end
@@ -56,15 +64,21 @@ module Fetcher
       parts = raw.split('"')
       return nil unless parts.count == 3
 
+      # save the raw data into a temp file
+      fname = "/tmp/minute_sh_#{rand}"
+      ftmp = File.open(fname, "w")
+      ftmp.write raw
+      ftmp.close
+
       result = ''
       script = File.expand_path("../../tools/sina_finance_decoder/SinaFinanceDecoder.xml", __FILE__)
-      parts[1].split(',').each do |daily_data|
-        puts script
-        result += `adl #{script} -- #{daily_data}`
-      end
+      cmd = "adl #{script} -- `cat #{fname}` 2>&1"
+      result = `#{cmd}`
+
+      `rm #{fname}`
 
       # TODO: how to validate the result
-      result[1...-1] # remove the trailing newline
+      result
     end
 
     def save_data(code, year, month, text)
