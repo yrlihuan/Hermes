@@ -1,7 +1,0 @@
-data
-  code.sh
-    600001.code 600002.code ...
-  daily.sh
-    600001.daily 600002.daily ...
-  code.sz
-  daily.sz
