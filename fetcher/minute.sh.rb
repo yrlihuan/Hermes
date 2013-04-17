@@ -19,7 +19,7 @@ module Fetcher
       today = Date.today
       jan1_2008 = Date.parse "2008-01-01"
 
-      codes = Accessor::CodeSh.new.query({:all => true, :more => true})
+      codes = code_cls.new.query({:all => true, :more => true})
       codes.each do |code, data|
         # some stocks don't have a ipo_date
         next unless data.key?(:ipo_date) && data[:ipo_date] && data[:ipo_date] < "2030-01-01"
@@ -46,6 +46,10 @@ module Fetcher
           end
         end
       end
+    end
+
+    def code_cls
+      Accessor::CodeSh
     end
 
     def url(code, year, month)

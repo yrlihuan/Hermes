@@ -2,3 +2,4 @@
 data/jqka
 data/*
 .DS_Store
+*.log
