@@ -12,12 +12,14 @@ require File.expand_path("../base.rb", __FILE__)
 
 module Fetcher
   class MinuteSh < Base
-    def run(force_update=false)
+    def run(force_update=false, update_last_month_only=false)
       accessor = accessor_cls.new
 
       # SINA only have data after 2008 :(
       today = Date.today
       jan1_2008 = Date.parse "2008-01-01"
+      last_month = Date.parse("%d-%02d-01" % [(today << 1).year, (today << 1).month])
+      start_month = update_last_month_only && last_month || jan1_2008
 
       codes = code_cls.new.query({:all => true, :more => true})
       codes.each do |code, data|
@@ -25,12 +27,14 @@ module Fetcher
         next unless data.key?(:ipo_date) && data[:ipo_date] && data[:ipo_date] < "2030-01-01"
 
         ipo_date = Date.parse data[:ipo_date]
-        d = ipo_date < jan1_2008 && jan1_2008 || ipo_date
+        d = ipo_date < start_month && start_month || ipo_date
 
         # update date prior to the current month
         while d.year < today.year || d.month < today.month
           y = d.year
           m = d.month
+
+          # next month
           d = d >> 1
 
           data_existed = accessor.exists?(code, y, m)
@@ -93,6 +97,15 @@ module Fetcher
 end
 
 if $PROGRAM_NAME == __FILE__
+  options = {}
+  opts = OptionParser.new do |opts|
+     opts.on("-l", "--update_latest", "only run to update latest month") do |date|
+      options[:update_latest] = true
+    end
+  end
+
+  opts.parse!
+
   gen = Fetcher::MinuteSh.new
-  gen.run
+  gen.run(false, options[:update_latest])
 end

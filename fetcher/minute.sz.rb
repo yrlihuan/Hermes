@@ -24,6 +24,15 @@ module Fetcher
 end
 
 if $PROGRAM_NAME == __FILE__
+  options = {}
+  opts = OptionParser.new do |opts|
+     opts.on("-l", "--update_latest", "only run to update latest month") do |date|
+      options[:update_latest] = true
+    end
+  end
+
+  opts.parse!
+
   gen = Fetcher::MinuteSz.new
-  gen.run
+  gen.run(false, options[:update_latest])
 end
