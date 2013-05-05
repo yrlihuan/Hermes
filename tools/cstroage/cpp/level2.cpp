@@ -84,12 +84,12 @@ std::string Level2Data::toCsv()
   double bidPrice[10];
 
   // convert prices
-  price = _price / 100.0;
-  avgOfferPrice = _avgOfferPrice / 1000.0;
-  avgBidPrice = _avgBidPrice / 1000.0;
+  price = this->price();
+  avgOfferPrice = this->avgOfferPrice();
+  avgBidPrice = this->avgBidPrice();
   for (int i = 0; i < 10; ++i) {
-    offerPrice[i] = _offerPrice[i] / 100.0;
-    bidPrice[i] = _bidPrice[i] / 100.0;
+    offerPrice[i] = this->offerPrice(i);
+    bidPrice[i] = this->bidPrice(i);
   }
 
   // int to double
@@ -139,5 +139,87 @@ std::string Level2Data::toCsv()
 
   return string(buf);
 }
+
+double Level2Data::localTS()
+{
+  return _localTS;
+}
+
+double Level2Data::remoteTS()
+{
+  return _remoteTS;
+}
+
+int    Level2Data::securityId()
+{
+  return _securityId;
+}
+
+int    Level2Data::volumeTraded()
+{
+  return _volumeTraded;
+}
+
+int    Level2Data::orderTraded()
+{
+  return _orderTraded;
+}
+
+int    Level2Data::totalOfferQty()
+{
+  return _totalOfferQty;
+}
+
+int    Level2Data::totalBidQty()
+{
+  return _totalBidQty;
+}
+
+float  Level2Data::price()
+{
+  return _price / 100.0;
+}
+
+float  Level2Data::avgOfferPrice()
+{
+  return _avgOfferPrice / 1000.0;
+}
+
+float  Level2Data::avgBidPrice()
+{
+  return _avgBidPrice / 1000.0;
+}
+
+float  Level2Data::offerPrice(int i)
+{
+  return _offerPrice[i] / 100.0;
+}
+
+int    Level2Data::offerNumber(int i)
+{
+  return _offerNumber[i];
+}
+
+int    Level2Data::offerQty(int i)
+{
+  return _offerQty[i];
+}
+
+float  Level2Data::bidPrice(int i)
+{
+  return _bidPrice[i] / 100.0;
+}
+
+int    Level2Data::bidNumber(int i)
+{
+  return _bidNumber[i];
+}
+
+int    Level2Data::bidQty(int i)
+{
+  return _bidQty[i];
+}
+
+
 
 

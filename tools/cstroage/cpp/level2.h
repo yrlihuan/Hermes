@@ -56,9 +56,29 @@ static const char *rawCsvOutputSchema = ""
 
 class Level2Data {
   public:
+    // csv conversions
     Level2Data(const std::string &rawCsvRecord);
-
     std::string toCsv();
+
+    // getters
+    double localTS();
+    double remoteTS();
+    int securityId();
+    int volumeTraded();
+    int orderTraded();
+    int totalOfferQty();
+    int totalBidQty();
+    float price();
+    float avgOfferPrice();
+    float avgBidPrice();
+
+    float offerPrice(int i);
+    int offerNumber(int i);
+    int offerQty(int i);
+
+    float bidPrice(int i);
+    int bidNumber(int i);
+    int bidQty(int i);
 
   private:
     double               _localTS;       // local timestamp
