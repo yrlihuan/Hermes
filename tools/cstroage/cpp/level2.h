@@ -13,19 +13,19 @@ static const char *rawCsvSchema = ""
 "%lf,"      // avg bid price
 "%lf,"      // avg bid qty
 "%lf,"      // offer price 10
-"%d,"       // offer qty 10
-"%d,"       // offer count 10
-"%lf,%d,%d," "%lf,%d,%d," "%lf,%d,%d," "%lf,%d,%d," "%lf,%d,%d," "%lf,%d,%d," "%lf,%d,%d," "%lf,%d,%d," // offer 9, ... , offer 2
+"%u,"       // offer qty 10
+"%hu,"       // offer count 10
+"%lf,%u,%hu," "%lf,%u,%hu," "%lf,%u,%hu," "%lf,%u,%hu," "%lf,%u,%hu," "%lf,%u,%hu," "%lf,%u,%hu," "%lf,%u,%hu," // offer 9, ... , offer 2
 "%lf,"      // offer price 1
-"%d,"       // offer qty 1
-"%d,"       // offer count 1
+"%u,"       // offer qty 1
+"%hu,"       // offer count 1
 "%lf,"      // bid price 1
-"%d,"       // bid qty 1
-"%d,"       // bid count 1
-"%lf,%d,%d," "%lf,%d,%d," "%lf,%d,%d," "%lf,%d,%d," "%lf,%d,%d," "%lf,%d,%d," "%lf,%d,%d," "%lf,%d,%d," // bid 2, ... , bid 9
+"%u,"       // bid qty 1
+"%hu,"       // bid count 1
+"%lf,%u,%hu," "%lf,%u,%hu," "%lf,%u,%hu," "%lf,%u,%hu," "%lf,%u,%hu," "%lf,%u,%hu," "%lf,%u,%hu," "%lf,%u,%hu," // bid 2, ... , bid 9
 "%lf,"      // bid price 10
-"%d,"       // bid qty 10
-"%d";       // bid count 10
+"%u,"       // bid qty 10
+"%hu";       // bid count 10
 
 static const char *rawCsvOutputSchema = ""
 "%06d,"       // security id
@@ -34,10 +34,10 @@ static const char *rawCsvOutputSchema = ""
 "%.2lf,"      // price
 "%.2lf,"      // volume traded
 "%d,"       // order traded
-"%.2lf,"      // avg offer price
-"%.1lf,"      // avg offer qty
-"%.2lf,"      // avg bid price
-"%.1lf,"      // avg bid qty
+"%.3lf,"      // avg offer price
+"%.0lf,"      // avg offer qty
+"%.3lf,"      // avg bid price
+"%.0lf,"      // avg bid qty
 "%.2lf,"      // offer price 10
 "%d,"       // offer qty 10
 "%d,"       // offer count 10
@@ -69,8 +69,8 @@ class Level2Data {
     std::tr1::uint32_t   _totalOfferQty;
     std::tr1::uint32_t   _totalBidQty;
     std::tr1::uint16_t   _price;         // price, in cents
-    std::tr1::uint16_t   _avgOfferPrice;
-    std::tr1::uint16_t   _avgBidPrice;
+    std::tr1::uint32_t   _avgOfferPrice;
+    std::tr1::uint32_t   _avgBidPrice;
 
     std::tr1::uint16_t   _offerPrice[10];
     std::tr1::uint16_t   _offerNumber[10];

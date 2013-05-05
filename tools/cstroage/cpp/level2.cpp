@@ -54,8 +54,8 @@ Level2Data::Level2Data(const std::string &rawCsvRecord)
 
   // convert prices
   _price = round(price * 100);
-  _avgOfferPrice = round(avgOfferPrice * 100);
-  _avgBidPrice = round(avgBidPrice * 100);
+  _avgOfferPrice = round(avgOfferPrice * 1000);
+  _avgBidPrice = round(avgBidPrice * 1000);
   for (int i = 0; i < 10; ++i) {
     _offerPrice[i] = round(offerPrice[i] * 100);
     _bidPrice[i] = round(bidPrice[i] * 100);
@@ -85,8 +85,8 @@ std::string Level2Data::toCsv()
 
   // convert prices
   price = _price / 100.0;
-  avgOfferPrice = _avgOfferPrice / 100.0;
-  avgBidPrice = _avgBidPrice / 100.0;
+  avgOfferPrice = _avgOfferPrice / 1000.0;
+  avgBidPrice = _avgBidPrice / 1000.0;
   for (int i = 0; i < 10; ++i) {
     offerPrice[i] = _offerPrice[i] / 100.0;
     bidPrice[i] = _bidPrice[i] / 100.0;
@@ -140,39 +140,4 @@ std::string Level2Data::toCsv()
   return string(buf);
 }
 
-int main()
-{
-  cout << sizeof(Level2Data) << endl;
 
-  string row = "600000,1367457940.08,09:25:01,9.59,101300.0,75,10.02,992703.0,9.14,295500.0,9.71,500,0,9.7,23100,0,9.69,105800,0,9.68,14600,0,9.67,12600,0,9.65,92500,0,9.64,20000,0,9.62,2000,0,9.6,48969,0,9.59,32420,3,9.58,19200,7,9.56,900,0,9.55,2000,0,9.54,200,0,9.52,300,0,9.51,9100,0,9.5,12600,0,9.49,1700,0,9.48,25000,0,9.46,900,0";
-  Level2Data a(row);
-  Level2Data b(row);
-
-  cout << a.toCsv() << endl;
-
-  char bufa[sizeof(Level2Data)];
-  char bufb[sizeof(Level2Data)];
-
-  memcpy(bufa, &a, sizeof(Level2Data));
-  memcpy(bufb, &b, sizeof(Level2Data));
-
-  ofstream fout;
-  fout.open("test.dat", ios::binary);
-  fout.write(bufa, sizeof(bufa));
-  fout.write(bufb, sizeof(bufb));
-  fout.close();
-
-  char bufcd[sizeof(Level2Data)*2];
-  ifstream fin;
-  fin.open("test.dat", ios::binary);
-  fin.read(bufcd, sizeof(bufcd));
-  fin.close();
-
-  Level2Data *pc = (Level2Data*)bufcd;
-  Level2Data *pd = (Level2Data*)(bufcd + sizeof(Level2Data));
-
-  cout << pc->toCsv() << endl;
-  cout << pd->toCsv() << endl;
-
-  return 0;
-}
