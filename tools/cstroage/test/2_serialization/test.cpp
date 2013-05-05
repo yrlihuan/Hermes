@@ -29,14 +29,26 @@ int main()
   fin.close();
 
   ofstream fout;
-  fout.open("result.csv");
+  fout.open("binary.dat");
+  fout.write((char*)(&data[0]), data.size() * sizeof(Level2Data));
+  fout.close();
 
+  ifstream fin2;
+  fin2.open("binary.dat");
+
+  int bufSize = data.size() * sizeof(Level2Data);
+  Level2Data *data2 = (Level2Data*)malloc(bufSize);
+  fin2.read((char*)data2, bufSize);
+  fin2.close();
+
+  ofstream fout2;
+  fout2.open("result.csv");
   int numOfLines = data.size();
   for (int i = 0; i < numOfLines; ++i) {
-    fout << data[i].toCsv() << endl;
+    fout2 << data2[i].toCsv() << endl;
   }
 
-  fout.close();
+  fout2.close();
 
   return 0;
 }
