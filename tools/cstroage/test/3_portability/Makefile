@@ -1,4 +1,4 @@
-all: build run clean
+all: build run diff clean
 
 build:
 	g++ -I../../cpp/ ../../cpp/level2.cpp test.cpp
@@ -6,6 +6,9 @@ build:
 run:
 	./a.out
 
+diff:
+	diff -q binary.dat expected.dat
+
 clean:
-	rm a.out
+	rm a.out binary.dat
 
