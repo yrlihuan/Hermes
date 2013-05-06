@@ -6,37 +6,18 @@
 #include <math.h>
 #include <string.h>
 #include "level2.h"
+#include "serializer.h"
 
 using namespace std;
+using namespace hermes;
 
 int main()
 {
+  Serializer serializer;
   vector<Level2Data> data;
 
-  ifstream fin;
-  fin.open("test.csv");
-  while (true)
-  {
-    char line[2048];
-    fin.getline(line, sizeof(line));
-
-    if (line[0] == '\0')
-      break;
-
-    data.push_back(Level2Data(string(line)));
-  }
-
-  fin.close();
-
-  ofstream fout;
-  fout.open("result.csv");
-
-  int numOfLines = data.size();
-  for (int i = 0; i < numOfLines; ++i) {
-    fout << data[i].toCsv() << endl;
-  }
-
-  fout.close();
+  serializer.loadCsvFile("test.csv", data);
+  serializer.dumpCsvFile("result.csv", data.begin(), data.end());
 
   return 0;
 }

@@ -1,5 +1,10 @@
+#ifndef _HERMES_LEVEL2_H_
+#define _HERMES_LEVEL2_H_
+
 #include <string>
 #include <tr1/cstdint>
+
+namespace hermes {
 
 static const char *rawCsvSchema = ""
 "%d,"       // security id
@@ -57,6 +62,7 @@ static const char *rawCsvOutputSchema = ""
 class Level2Data {
   public:
     // csv conversions
+    Level2Data() {}
     Level2Data(const std::string &rawCsvRecord);
     std::string toCsv();
 
@@ -100,3 +106,7 @@ class Level2Data {
     std::tr1::uint16_t   _bidNumber[10];
     std::tr1::uint32_t   _bidQty[10];
 };
+
+} // END of NS Hermes
+
+#endif

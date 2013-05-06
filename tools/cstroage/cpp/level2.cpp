@@ -7,6 +7,7 @@
 #include "level2.h"
 
 using namespace std;
+using namespace hermes;
 
 Level2Data::Level2Data(const std::string &rawCsvRecord)
 {
