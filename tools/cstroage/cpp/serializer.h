@@ -7,6 +7,8 @@
 #include <iterator>
 #include <string>
 
+#include <string.h>
+
 #include "level2.h"
 
 namespace hermes {
@@ -14,6 +16,43 @@ namespace hermes {
 class Serializer
 {
 public:
+  // -----------------------------------------------
+  // csv serializer for separated file
+  // e.g., files like level2/600000/20130502.csv
+  // -----------------------------------------------
+  template<typename DataType>
+  void loadCsvFile(const std::string &csvFilename, const std::string &securityId, std::vector<DataType> &dataOut)
+  {
+    // Here we just assume no line will be longer than 4096
+    // a typical level2 data csv line is about 300 bytes
+    char lineBuf[4096];
+    strcpy(lineBuf, securityId.c_str());
+    int idLength = securityId.length();
+    lineBuf[idLength] = ',';
+
+    char *repositioned = lineBuf + idLength + 1;
+    int bufSizeRemained = sizeof(lineBuf) - idLength - 1;
+
+    std::ifstream fin;
+    fin.open(csvFilename.c_str());
+    while (true)
+    {
+      fin.getline(repositioned, bufSizeRemained);
+
+      if (repositioned[0] == '\0')
+        break;
+
+      dataOut.push_back(DataType(std::string(lineBuf)));
+    }
+
+    fin.close();
+  }
+
+
+  // -----------------------------------------------
+  // csv serializer for merged file
+  // e.g., files like level2_merged/20130502.csv
+  // -----------------------------------------------
   template<typename DataType>
   void loadCsvFile(const std::string &csvFilename, std::vector<DataType> &dataOut)
   {
@@ -50,6 +89,9 @@ public:
     fout.close();
   }
 
+  // -----------------------------------------------
+  // binary serializer
+  // -----------------------------------------------
   template<typename DataType>
   void loadDatFile(const std::string &csvFilename, std::vector<DataType> &dataOut)
   {

@@ -8,8 +8,9 @@ run:
 
 compare:
 	./compare.py test.csv result.csv
+	./compare.py test.csv result2.csv
 
 clean:
-	rm a.out result.csv binary.dat
+	rm a.out binary.dat result.csv result2.csv
 
 
