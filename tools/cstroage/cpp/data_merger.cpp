@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <list>
+#include <deque>
 #include <string.h>
 #include "level2.h"
 #include "serializer.h"
@@ -48,43 +49,62 @@ void readRawCsvFiles(list<DataVector> &result, const char *configFile)
 // and that is the sorted data
 void mergeSort(list<DataVector> &data)
 {
+  typedef deque<Level2Data> DataDeque;
+
   while (data.size() > 1) {
-    DataVector &v0 = *(data.begin());
-    DataVector &v1 = *(++data.begin());
+    DataDeque deques[2];
+    for (int i = 0; i < 2; ++i) {
+      DataVector &v = data.front();
+      DataDeque &d = deques[i];
+      d.resize(v.size());
 
-    DataVector merged(v0.size() + v1.size());
+      std::copy(v.begin(), v.end(), d.begin());
+      v.clear();
+      data.pop_front();
+    }
 
-    DataVector::iterator it0 = v0.begin();
-    DataVector::iterator it1 = v1.begin();
-    DataVector::iterator it = merged.begin();
+    DataDeque &d0 = deques[0];
+    DataDeque &d1 = deques[1];
 
-    while (it0 < v0.end() && it1 < v1.end()) {
+    data.push_back(DataVector());
+    DataVector &merged = data.back();
+
+    DataDeque::iterator it0 = d0.begin();
+    DataDeque::iterator it1 = d1.begin();
+
+    while (it0 < d0.end() && it1 < d1.end()) {
       if (it0->localTS() < it1->localTS()) {
-        *(it++) = *(it0++);
+        merged.push_back(*(it0++));
+        d0.pop_front();
       }
       else if (it0->localTS() > it1->localTS()) {
-        *(it++) = *(it1++);
+        merged.push_back(*(it1++));
+        d1.pop_front();
       }
       else {
         if (it0->securityId() < it1->securityId()) {
-          *(it++) = *(it0++);
+          merged.push_back(*(it0++));
+          d0.pop_front();
         }
         else {
-          *(it++) = *(it1++);
+          merged.push_back(*(it1++));
+          d1.pop_front();
         }
       }
     }
 
-    while (it0 < v0.end())
-      *(it++) = *(it0++);
+    // why not use std::copy here?
+    // cause we expect it0 is very close to d0's end
+    // using assignment is much easier
+    while (it0 < d0.end()) {
+      merged.push_back(*(it0++));
+      d0.pop_front();
+    }
 
-    while (it1 < v1.end())
-      *(it++) = *(it1++);
-
-    data.pop_front();
-    data.pop_front();
-
-    data.push_back(merged);
+    while (it1 < d1.end()) {
+      merged.push_back(*(it1++));
+      d1.pop_front();
+    }
   }
 }
 

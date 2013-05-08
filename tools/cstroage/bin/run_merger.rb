@@ -40,6 +40,7 @@ if $PROGRAM_NAME == __FILE__
   csv_files.each do |code,path|
     fout.write("#{code},#{path}\n")
   end
+  fout.close()
 
   # check if there is data_merger executable under bin folder
   # if doesn't exist, run make under cpp folder
@@ -57,9 +58,11 @@ if $PROGRAM_NAME == __FILE__
 
   # run data_merger
   puts "run data_merger"
-  `#{curdir}/data_merger #{tempCfg} "#{out_csv}" "#{out_dat}"`
+  output = `#{curdir}/data_merger #{tempCfg} "#{out_csv}" "#{out_dat}" 2>&1`
+
+  puts output
 
   # remove temp file
   puts "done!"
-  `rm #{tempCfg}`
+  #`rm #{tempCfg}`
 end
