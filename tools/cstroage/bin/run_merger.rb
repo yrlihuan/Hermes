@@ -37,6 +37,7 @@ if $PROGRAM_NAME == __FILE__
   # create config file
   tempCfg = "/tmp/merger_#{date}.cfg"
   fout = File.open(tempCfg, 'w')
+  csv_files = csv_files.sort {|x,y| x[0].to_i - y[0].to_i}
   csv_files.each do |code,path|
     fout.write("#{code},#{path}\n")
   end
