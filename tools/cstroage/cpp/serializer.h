@@ -93,7 +93,7 @@ public:
   // binary serializer
   // -----------------------------------------------
   template<typename DataType>
-  void loadDatFile(const std::string &csvFilename, std::vector<DataType> &dataOut)
+  void loadDatFile(const std::string &csvFilename, std::vector<DataType> &dataOut, int start=0, int end=-1)
   {
     // hmmm... we don't know the file size yet
     std::ifstream fin(csvFilename.c_str());
@@ -108,10 +108,20 @@ public:
     }
 
     // allocate space
-    int numOfData = size / sizeof(DataType);
+    int numTotal = size / sizeof(DataType);
+    if (end == -1 || end > numTotal) {
+      end = numTotal;
+    }
+
+    if (start > numTotal) {
+      start = numTotal;
+    }
+
+    int numOfData = end - start;
     dataOut.resize(numOfData);
 
-    fin.read((char*)(&dataOut[0]), size);
+    fin.seekg(sizeof(DataType) * start, fin.beg);
+    fin.read((char*)(&dataOut[0]), sizeof(DataType)*numOfData);
     fin.close();
   }
 
