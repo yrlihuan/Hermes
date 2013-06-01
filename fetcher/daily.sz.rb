@@ -30,8 +30,13 @@ module Fetcher
     end
 
     def url(code)
+      today = Date.today
+      y = today.year
+      m = today.month
+      d = today.day
+
       "http://ichart.finance.yahoo.com/table.csv?" +
-      "s=#{code}.sz&d=1&e=1&f=2013&g=d&a=3&b=9&c=1990&ignore=.csv"
+      "s=#{code}.sz&d=#{m-1}&e=#{d}&f=#{y}&g=d&a=3&b=9&c=1990&ignore=.csv"
     end
   end
 end
